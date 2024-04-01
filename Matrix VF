@@ -1,4 +1,4 @@
-<apex:page controller="BBworkReportController" lightningStyleSheets="true" title="Opportunity Report">
+<apex:page controller="MatrixHomeController" lightningStyleSheets="true" title="Opportunity Report">
     <style>
         .report-table {
             width: 100%;
