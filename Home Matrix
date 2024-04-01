@@ -1,1 +1,62 @@
-
+public class BBworkReportController {
+    public List<StageWrapper> stageList { get; set; }
+    public Map<String, Decimal> workGroupTotals { get; set; }
+    public Integer workGroupCount { get; set; }
+    public Decimal grandTotal { get; set; }
+    
+    public BBworkReportController() {
+        stageList = new List<StageWrapper>();
+        workGroupTotals = new Map<String, Decimal>();
+        grandTotal = 0;
+        
+        Map<String, Map<String, Decimal>> stageWorkGroupAmountMap = new Map<String, Map<String, Decimal>>();
+        
+        // Calculate totals and group data by stage and work group
+        for(AggregateResult ar : [SELECT Work_Group__c, StageName, SUM(Amount) totalAmount 
+                                   FROM Opportunity 
+                                   GROUP BY Work_Group__c, StageName]) {
+            String workGroup = (String)ar.get('Work_Group__c');
+            String stageName = (String)ar.get('StageName');
+            Decimal amount = (Decimal)ar.get('totalAmount');
+            
+            if(!stageWorkGroupAmountMap.containsKey(stageName)) {
+                stageWorkGroupAmountMap.put(stageName, new Map<String, Decimal>());
+            }
+            stageWorkGroupAmountMap.get(stageName).put(workGroup, amount);
+            
+            // Calculate work group totals
+            if(!workGroupTotals.containsKey(workGroup)) {
+                workGroupTotals.put(workGroup, 0);
+            }
+            workGroupTotals.put(workGroup, workGroupTotals.get(workGroup) + amount);
+            
+            // Calculate grand total
+            grandTotal += amount;
+        }
+        
+        // Build the stage wrapper list
+        for(String stageName : stageWorkGroupAmountMap.keySet()) {
+            StageWrapper stageWrapper = new StageWrapper(stageName);
+            for(String workGroup : workGroupTotals.keySet()) {
+                Decimal amount = stageWorkGroupAmountMap.get(stageName).get(workGroup);
+                stageWrapper.workGroupAmounts.add(amount != null ? amount : 0);
+            }
+            stageList.add(stageWrapper);
+        }
+        
+        // Set the workGroupCount
+        workGroupCount = workGroupTotals.size();
+    }
+    
+    public class StageWrapper {
+        public String stageName { get; set; }
+        public List<Decimal> workGroupAmounts { get; set; }
+        public Decimal stageTotal { get; set; }
+        
+        public StageWrapper(String stageName) {
+            this.stageName = stageName;
+            this.workGroupAmounts = new List<Decimal>();
+            this.stageTotal = 0;
+        }
+    }
+}
