@@ -1,0 +1,4 @@
+<!-- MyVisualforceWrapper.cmp -->
+<aura:component implements="flexipage:availableForAllPageTypes">
+    <iframe src="/apex/MatrixFinal" width="100%" height="500px" frameborder="0"/>
+</aura:component>
