@@ -1,0 +1,55 @@
+<apex:page controller="BBworkReportController" lightningStyleSheets="true" title="Opportunity Report">
+    <style>
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+        .report-table th, .report-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .report-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .report-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .report-table tr:hover {
+            background-color: #e9e9e9;
+        }
+        .total-row {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+    <apex:pageBlock title="Opportunity Report" id="reportBlock">
+        <table class="report-table">
+            <tr>
+                <th>Stage Name</th>
+                <apex:repeat value="{!workGroupTotals}" var="workGroup">
+                    <th>{!workGroup}</th>
+                </apex:repeat>
+                <th>Total</th>
+            </tr>
+            <apex:repeat value="{!stageList}" var="stage">
+                <tr>
+                    <td>{!stage.stageName}</td>
+                    <apex:variable var="stageTotal" value="{!0}" />
+                    <apex:repeat value="{!stage.workGroupAmounts}" var="amount">
+                        <td>{!amount}</td>
+                        <apex:variable var="stageTotal" value="{!stageTotal + amount}" />
+                    </apex:repeat>
+                    <td>{!stageTotal}</td>
+                </tr>
+            </apex:repeat>
+            <tr class="total-row">
+                <td colspan="{!workGroupCount + 1}">Grand Total:</td>
+                <td>{!grandTotal}</td>
+            </tr>
+        </table>
+    </apex:pageBlock>
+</apex:page>
