@@ -1,10 +1,10 @@
-public class BBworkReportController {
+public class MatrixHomeController {
     public List<StageWrapper> stageList { get; set; }
     public Map<String, Decimal> workGroupTotals { get; set; }
     public Integer workGroupCount { get; set; }
     public Decimal grandTotal { get; set; }
     
-    public BBworkReportController() {
+    public MatrixHomeController() {
         stageList = new List<StageWrapper>();
         workGroupTotals = new Map<String, Decimal>();
         grandTotal = 0;
